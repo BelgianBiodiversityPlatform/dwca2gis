@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 import argparse
+import sys
 
 from dwca import DwCAReader
 from dwca.darwincore.utils import qualname as qn
-
 from cartodb import CartoDBAPIKey, CartoDBException
 
 from utils import query_yes_no
 
-def main():
-    
+DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']
 
+def main():
     # TODO: Better CLI Help
     parser = argparse.ArgumentParser(
         description="Import a DarwinCore Archive file into CartDB.")
@@ -35,10 +35,13 @@ def main():
 
     args = parser.parse_args()
 
+    target_table = args.table
+
     cl = CartoDBAPIKey(args.apikey, args.domain)
 
     if args.truncate:
-        pass
+        if query_yes_no("Are you sure you want to truncate the database ? Data will be LOST !", default="no"):
+            cl.sql("TRUNCATE TABLE {table}".format(table=target_table))
 
     with DwCAReader(args.source_file) as dwca:
 
@@ -49,12 +52,13 @@ def main():
             lat = line.data[qn('decimalLatitude')]
             lon = line.data[qn('decimalLongitude')]
 
-            formatted_sql = sql.format(table=args.table,
+            formatted_sql = sql.format(table=target_table,
                                    column_names='the_geom',
                                    column_values='ST_SetSRID(ST_Point(' + lon + ', ' + lat + '), 4326)')
 
             try:
-                print cl.sql(formatted_sql)
+                cl.sql(formatted_sql)
+                sys.stdout.write('.')
             except CartoDBException as e:
                 print ("CartoDB error: ", e)
 
