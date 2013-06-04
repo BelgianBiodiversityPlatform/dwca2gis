@@ -44,23 +44,30 @@ def main():
             cl.sql("TRUNCATE TABLE {table}".format(table=target_table))
 
     with DwCAReader(args.source_file) as dwca:
+        if valid_dwca(dwca):    
+            sql = 'INSERT INTO {table} ({column_names}) VALUES ({column_values})'
 
-        # TODO: test type is occurrence, mandatory fields presents, ...
-        sql = 'INSERT INTO {table} ({column_names}) VALUES ({column_values})'
+            for line in dwca.each_line():
+                lat = line.data[qn('decimalLatitude')]
+                lon = line.data[qn('decimalLongitude')]
 
-        for line in dwca.each_line():
-            lat = line.data[qn('decimalLatitude')]
-            lon = line.data[qn('decimalLongitude')]
-
-            formatted_sql = sql.format(table=target_table,
+                formatted_sql = sql.format(table=target_table,
                                    column_names='the_geom',
                                    column_values='ST_SetSRID(ST_Point(' + lon + ', ' + lat + '), 4326)')
 
-            try:
-                cl.sql(formatted_sql)
-                sys.stdout.write('.')
-            except CartoDBException as e:
-                print ("CartoDB error: ", e)
+                try:
+                    cl.sql(formatted_sql)
+                    sys.stdout.write('.')
+                except CartoDBException as e:
+                    print ("CartoDB error: ", e)
+        else:
+            print "Invalid dwca."
+
+
+def valid_dwca(dwca):
+    return (dwca.core_rowtype == qn('Occurrence') and
+            dwca.core_contains_term(qn('decimalLatitude')) and
+            dwca.core_contains_term(qn('decimalLongitude')))
 
 
 if __name__ == "__main__":
