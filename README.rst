@@ -42,7 +42,9 @@ Use
 
 ::
     
-    $ python dwca2cartodb.py --domain niconoe --api-key <YOUR_API_KEY> --table <YOUR_TABLE_NAME> your-dwca.zip --truncate
+    $ python dwca2cartodb.py --domain <YOUR_CARTODB_DOMAIN> --api-key <YOUR_API_KEY> --table <YOUR_TABLE_NAME> your-dwca.zip
+
+You can add "--truncate" to truncate existing CartoDB table before importing new data (useful for multiple imports in a row).
 
 
 .. _Darwin Core Archive: http://en.wikipedia.org/wiki/Darwin_Core_Archive
