@@ -4,7 +4,7 @@ import sys
 
 from dwca import DwCAReader
 
-from output import ShapefileOutput
+from output.shapefile_out import ShapefileOutput
 from utils import dwcaline_to_epsg4326, valid_dwca
 
 DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']

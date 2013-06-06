@@ -6,7 +6,7 @@ from cartodb import CartoDBException
 from dwca import DwCAReader
 
 from utils import query_yes_no, dwcaline_to_epsg4326, valid_dwca
-from output import CartoDBOutput
+from output.cartodb_out import CartoDBOutput
 
 DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']
 
