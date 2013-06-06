@@ -1,3 +1,4 @@
+import shapefile
 from cartodb import CartoDBAPIKey
 
 class CartoDBOutput:
@@ -18,3 +19,33 @@ class CartoDBOutput:
 
     def truncate_table(self):
         self.cl.sql("TRUNCATE TABLE {table}".format(table=self.table))
+
+class ShapefileOutput:
+    def __init__(self, filename):
+        self.filename = filename
+
+        self.w = shapefile.Writer(shapefile.POINT)
+        self.w.field('myfield')
+        self.w.autoBalance = 1
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.w.save(self.filename)
+
+    def insert_line(self, lat, lon):
+        try:
+            lo = float(lon)
+            la = float(lat)
+
+            self.w.point(lo, la)
+            self.w.record('toto')
+        except ValueError:
+            # Ruturn some-thing to display a warning to user
+            pass
+        
+        # print "lon: " + lon
+        # self.w.point(lo, la)
+        # #self.w.point(2,3)
+        # print("pass2")
