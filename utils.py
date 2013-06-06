@@ -1,5 +1,21 @@
 import sys
 
+from dwca.darwincore.utils import qualname as qn
+
+def valid_dwca(dwca):
+    return (dwca.core_rowtype == qn('Occurrence') and
+            dwca.core_contains_term(qn('decimalLatitude')) and
+            dwca.core_contains_term(qn('decimalLongitude')))
+
+def dwcaline_to_epsg4326(line):
+    """ Returns a {'lat': X, 'lon': Y} dict for the given DwCALine. """
+
+    lat = line.data[qn('decimalLatitude')]
+    lon = line.data[qn('decimalLongitude')]
+
+    return {'lat': lat, 'lon': lon}
+
+
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via raw_input() and return their answer.
 
@@ -10,9 +26,10 @@ def query_yes_no(question, default="yes"):
 
     The "answer" return value is one of "yes" or "no".
     """
-    valid = {"yes":True,   "y":True,  "ye":True,
-             "no":False,     "n":False}
-    if default == None:
+    valid = {"yes": True,   "y": True,  "ye": True,
+             "no": False,   "n": False}
+    
+    if default is None:
         prompt = " [y/n] "
     elif default == "yes":
         prompt = " [Y/n] "

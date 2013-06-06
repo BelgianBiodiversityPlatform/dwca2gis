@@ -2,11 +2,11 @@
 import argparse
 import sys
 
+from cartodb import CartoDBException
 from dwca import DwCAReader
-from dwca.darwincore.utils import qualname as qn
-from cartodb import CartoDBAPIKey, CartoDBException
 
-from utils import query_yes_no
+from utils import query_yes_no, dwcaline_to_epsg4326, valid_dwca
+from output import CartoDBOutput
 
 DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']
 
@@ -37,38 +37,23 @@ def main():
 
     target_table = args.table
 
-    cl = CartoDBAPIKey(args.apikey, args.domain)
+    out = CartoDBOutput(args.apikey, args.domain, args.table)
 
     if args.truncate:
         if query_yes_no("Are you sure you want to truncate the database ? Data will be LOST !", default="no"):
-            cl.sql("TRUNCATE TABLE {table}".format(table=target_table))
+            out.truncate_table()
 
     with DwCAReader(args.source_file) as dwca:
         if valid_dwca(dwca):    
-            sql = 'INSERT INTO {table} ({column_names}) VALUES ({column_values})'
-
             for line in dwca.each_line():
-                lat = line.data[qn('decimalLatitude')]
-                lon = line.data[qn('decimalLongitude')]
-
-                formatted_sql = sql.format(table=target_table,
-                                   column_names='the_geom',
-                                   column_values='ST_SetSRID(ST_Point(' + lon + ', ' + lat + '), 4326)')
-
                 try:
-                    cl.sql(formatted_sql)
+                    out.insert_line(**dwcaline_to_epsg4326(line))
                     sys.stdout.write('.')
                 except CartoDBException as e:
                     print ("CartoDB error: ", e)
         else:
-            print "Invalid dwca."
-
-
-def valid_dwca(dwca):
-    return (dwca.core_rowtype == qn('Occurrence') and
-            dwca.core_contains_term(qn('decimalLatitude')) and
-            dwca.core_contains_term(qn('decimalLongitude')))
-
+            # TODO: more detailed message
+            print "Invalid source DwC-A file."
 
 if __name__ == "__main__":
     main()
