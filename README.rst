@@ -28,6 +28,7 @@ dwca2cartodb
 ------------
 
 Prerequisites:  
+
 * a free account at `CartoDB`_.
 * a DwC-A file to import(for example from `this list of IPT instances <http://gbrds.gbif.org/browse/start?agentType=14100&filterValue=IPT&pageNo=1&pageSize=100>`_).
 
