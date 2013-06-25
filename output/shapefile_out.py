@@ -24,6 +24,12 @@ class ShapefileOutput:
         os.mkdir(directory_name)
         self.w.save(os.path.join(directory_name, self.filename))
 
+        # We also create a .prj file with CRS metadata:
+        # FIXME: content is not pasrable by Qgis... what should be there exactly ?
+        prj = open(os.path.join(directory_name, (self.filename + '.prj')), "w")
+        prj.write(self.out_proj.srs)
+        prj.close()
+
     def insert_line(self, lat, lon):
         """ Insert a line in the shapefile. Lat/Lon are in EPSG:4326. """
         try:
