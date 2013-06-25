@@ -23,6 +23,7 @@ For now, clone this repository and install the following dependencies via easy_i
 * python-dwca-reader==0.1.1
 * pyshp==1.1.4
 * pyproj==1.9.3
+* GDAL==1.9.1
 
 dwca2cartodb
 ------------
