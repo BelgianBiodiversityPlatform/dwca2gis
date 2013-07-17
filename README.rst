@@ -36,7 +36,7 @@ Prerequisites:
 1. Run dwca2cartodb:
 ::
     
-    $ python dwca2cartodb.py --domain <YOUR_CARTODB_DOMAIN> --api-key <YOUR_API_KEY> --table <YOUR_TABLE_NAME> your-dwca.zip
+    $ python dwca2cartodb.py --domain <YOUR_CARTODB_DOMAIN> --api-key <YOUR_API_KEY> --table <YOUR_TABLE_NAME> dwcafile.zip.zip
 
 You can add "--truncate" to truncate existing CartoDB table before importing new data (useful for multiple imports in a row).
 
@@ -47,7 +47,19 @@ You can add "--truncate" to truncate existing CartoDB table before importing new
 dwca2shp
 --------
 
-TODO: fill this section.
+Example use
+::
+
+    $ python dwca2gis dwcafile.zip ./my_shapefile
+
+Will output a Shapefile in ./my_shapefile/shapefile.shp using the EPSG:4326 CRS.
+
+You can also generate a Shapefile using another CRS:
+::
+
+    $ python dwca2gis dwcafile.zip ./my_shapefile --crs epsg:3857
+
+Will output a Shepefile using the famous EPSG:3857 CRS (aka Sperical Mercator, Google projection, 900913, EPSG:3587, ...)
 
 .. _Darwin Core Archive: http://en.wikipedia.org/wiki/Darwin_Core_Archive
 .. _CartoDB: http://cartodb.com/
