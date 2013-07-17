@@ -12,6 +12,7 @@ DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']
 
 def main():
     # TODO: Better CLI Help
+    # TODO: split into parse_args() and main(args) (see dwca2shp)
     parser = argparse.ArgumentParser(
         description="Import a DarwinCore Archive file into CartDB.")
 

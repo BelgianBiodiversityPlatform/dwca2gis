@@ -9,8 +9,7 @@ from utils import dwcaline_to_epsg4326, valid_dwca
 
 DEFAULT_IMPORTED_FIELDS = ['occurrenceID', 'scientificName', 'eventDate']
 
-
-def main():
+def parse_args():
     parser = argparse.ArgumentParser(
         description="Convert a DarwinCore Archive file to an ESRI Shapefile.")
 
@@ -25,8 +24,10 @@ def main():
                         help="Output projection, default to epsg:4326",
                         default='epsg:4326')
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main(args):
     with DwCAReader(args.source_file) as dwca:
         if valid_dwca(dwca):
             with ShapefileOutput(args.destination, args.crs) as out:
@@ -36,4 +37,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    main(args)
