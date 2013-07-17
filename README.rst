@@ -61,6 +61,18 @@ You can also generate a Shapefile using another CRS:
 
 Will output a Shepefile using the famous EPSG:3857 CRS (aka Sperical Mercator, Google projection, 900913, EPSG:3587, ...)
 
+Running tests
+-------------
+
+The test suite uses `nose`_:
+
+::
+    
+    $ pip install nose
+    $ nosetests
+
+
 .. _Darwin Core Archive: http://en.wikipedia.org/wiki/Darwin_Core_Archive
 .. _CartoDB: http://cartodb.com/
 .. _Shapefile: https://en.wikipedia.org/wiki/Shapefile
+.. _nose: https://nose.readthedocs.org/en/latest/
