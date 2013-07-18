@@ -8,8 +8,8 @@ EPSG_4326 = pyproj.Proj("+init=epsg:4326")
 
 
 class ShapefileOutput:
-    def __init__(self, filename, out_crs):
-        self.filename = filename
+    def __init__(self, path, out_crs):
+        self.path = path
 
         self.out_proj = pyproj.Proj("+init=" + out_crs)
 
@@ -21,13 +21,15 @@ class ShapefileOutput:
         return self
 
     def __exit__(self, type, value, traceback):
-        directory_name = self.filename
+        directory_name = self.path
+        filename = os.path.basename(directory_name)
 
+        # Put the wholme shapefile in its own directory (same name than .shp file)
         os.mkdir(directory_name)
-        self.w.save(os.path.join(directory_name, self.filename))
+        self.w.save(os.path.join(directory_name, filename))
 
         # We also create a .prj file with CRS metadata:
-        prj = open(os.path.join(directory_name, (self.filename + '.prj')), "w")
+        prj = open(os.path.join(directory_name, (filename + '.prj')), "w")
 
         prj.write(self._proj4_to_wkt(self.out_proj.srs))
         prj.close()
@@ -40,7 +42,7 @@ class ShapefileOutput:
             self.w.point(t[0], t[1])
             self.w.record('toto')
         except ValueError:
-            # Return some-thing to display a warning to user
+            # TODO: Return some-thing to display a warning to user
             pass
 
     def _proj4_to_wkt(self, proj4):
