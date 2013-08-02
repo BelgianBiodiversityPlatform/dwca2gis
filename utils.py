@@ -1,4 +1,5 @@
 import sys
+import unicodedata
 
 from dwca.darwincore.utils import qualname as qn
 
@@ -7,13 +8,24 @@ def valid_dwca(dwca):
             dwca.core_contains_term(qn('decimalLatitude')) and
             dwca.core_contains_term(qn('decimalLongitude')))
 
+
+class CannotConvertException(Exception):
+    pass
+
 def dwcaline_to_epsg4326(line):
     """ Returns a {'lat': X, 'lon': Y} dict for the given DwCALine. """
 
-    lat = line.data[qn('decimalLatitude')]
-    lon = line.data[qn('decimalLongitude')]
+    try:
+        lat = float(line.data[qn('decimalLatitude')])
+        lon = float(line.data[qn('decimalLongitude')])
+    except ValueError:
+        raise CannotConvertException()
 
     return {'lat': lat, 'lon': lon}
+
+
+def unicode_to_ascii(string):
+    return unicodedata.normalize('NFKD', string).encode('ascii', 'ignore')
 
 
 def query_yes_no(question, default="yes"):
