@@ -3,6 +3,7 @@ import os
 import tempfile
 from argparse import Namespace
 from shutil import rmtree
+import shapefile
 
 from ..dwca2shp import main
 
@@ -39,6 +40,21 @@ class TestD2Shp(unittest.TestCase):
 
     def test_default_crs(self):
         pass
+
+    def test_row_count(self):
+        """Ensure we have the same # of rows in the shapefile than in DwC-A."""
+
+        with destination_shapefile() as dest:
+            args = Namespace()
+            args.source_file = DWCA_SIMPLE_GIS_PATH
+            args.destination = dest
+            args.crs = 'epsg:4326'
+
+            main(args)
+
+            sf = shapefile.Reader(os.path.join(dest, 'shapefile_out'))
+            shapes = sf.shapes()
+            self.assertEqual(2, len(shapes))  # 2 rows in core sample file
 
     # TODO:
     # - Test absolute and relative path can be passed to command line
