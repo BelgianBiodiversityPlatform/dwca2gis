@@ -61,6 +61,8 @@ You can also generate a Shapefile using another CRS:
 
 Will output a Shepefile using the famous EPSG:3857 CRS (aka Sperical Mercator, Google projection, 900913, EPSG:3587, ...)
 
+For each Darwin Core term in the "Core file" of the source DwC-A, an attribute will be set in the resulting shapefile.
+
 Running tests
 -------------
 
